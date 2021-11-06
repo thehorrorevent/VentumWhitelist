@@ -221,9 +221,9 @@ if not _G.LoadedVentum then
 						T:Play()
                         T.Completed:Wait()
 						RegisterFrame:Destroy()
-						loadstring(game:HttpGet("https://raw.githubusercontent.com/smokingsin/VentumWhitelist/main/MainScript.lua", true))()
 					end
 				end
+                loadstring(game:HttpGet("https://raw.githubusercontent.com/smokingsin/VentumWhitelist/main/MainScript.lua", true))()
 			elseif game:HttpGet(URL) ~= "Allowed" then
 				GetHWID()
 			end
