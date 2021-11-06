@@ -305,7 +305,7 @@ if not _G.LoadedVentum then
 		if DetailsBox.Text ~= '' then
 			local Text = DetailsBox.Text
             print(Text)
-            local UserID = Services.Players.LocalPlayer
+            local UserID = Services.Players.LocalPlayer.UserId
 			local URL = "https://bothosterforgame.000webhostapp.com/index.php?key=".. Text .."&user=" .. UserID
 			
 			if game:HttpGet(URL) == "Allowed" then
