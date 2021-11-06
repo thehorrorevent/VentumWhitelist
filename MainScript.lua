@@ -67,7 +67,8 @@ if not _G.Ventum then
 	
 	--/ Settings
 	local Settings = {
-		CommandBarHotkey = "`"
+		CommandBarHotkey = Enum.KeyCode.BackSlash,
+		ChatPrefix = ""
 	};
 	
 	--/ Local Functions
@@ -196,16 +197,67 @@ if not _G.Ventum then
 	CommandBarBoxConstraint.MaxTextSize = 30
 	
 	--/ Main Script
+	function ProcessCommand(message)
+		local IsACommand = false
+		local Prefix = Settings.ChatPrefix
+		local Original = {message}
+
+		if message:sub(1,string.len(Prefix)) == Prefix then
+			IsACommand = true
+		end
+
+		if IsACommand  then
+			for index, msg in pairs(Original) do
+				if string.lower(msg:sub(1, string.len(Prefix))) == Prefix then
+					msg = msg:sub(string.len(Prefix) + 1)
+					message[index] = msg
+				end
+				
+				for i = 1, string.len(msg) do
+					if Prefix == string.lower(msg:sub(i, i + string.len(Prefix) - 1)) then
+						table.insert(Original, msg:sub(1, i - 1))
+						table.insert(Original, msg:sub(i + string.len(Prefix)))
+						table.remove(Original, i)
+					end
+				end
+			end
+			
+			for i = 1, #Original do
+				local Args = {}
+				for v in string.gmatch(Original[i], "%S+") do
+					table.insert(Args, v)
+				end
+				
+				if #Args > 0 then
+					Args[1] = string.lower(Args[1])
+					local FoundCommand = false
+					
+					for index, cmd in pairs(VentumCommands) do
+						for i, trigger in pairs(cmd.Triggers) do
+							if trigger == Args[1] then
+								-- Figure out how to add command action here Tomorrow
+							end
+							FoundCommand = true
+							break
+						end
+					end
+					if FoundCommand then
+						break
+					end
+				end
+			end
+		end
+	end
+	
 	CommandBarBox.FocusLost:Connect(function()
-		CommandBarFrame:TweenPosition(UDim2.new(1.2, 0, 0.5, 0), "Out", "Exponential", 0.5, false)
+		CommandBarFrame:TweenPosition(UDim2.new(1.2, 0, 0.5, 0), "Out", "Quad", 1, false)
 	end)
 	
 	Services.UserInputService.InputBegan:Connect(function(Button, Processed)
 		if not Processed then
 			if Button.KeyCode == Enum.KeyCode.BackSlash then
-				CommandBarFrame.Position = UDim2.new(1.2, 0, 0.5, 0)
 				CommandBarFrame.Size = UDim2.new(0.15625, 0, 0.0452488735, 0)
-				CommandBarFrame:TweenPosition(UDim2.new(0.93, 0, 0.5, 0), "Out", "Exponential", 0.5, false)
+				CommandBarFrame:TweenPosition(UDim2.new(0.93, 0, 0.5, 0), "Out", "Quad", 1, false)
 				CommandBarBox:CaptureFocus()
 				Services.RunService.RenderStepped:Wait()
 				CommandBarBox.Text = ""
