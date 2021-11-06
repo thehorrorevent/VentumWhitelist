@@ -174,7 +174,7 @@ if not _G.Ventum then
 	local CommandStrokeGradient = Inst.New("UIGradient", CommandBarStroke)
 	CommandStrokeGradient.Rotation = 180
 	CommandStrokeGradient.Transparency = NumberSequence.new{
-		NumberSequence.new(0, 1),
+		NumberSequenceKeypoint.new(0, 1),
 		NumberSequenceKeypoint.new(1, 0)
 	};
 	
