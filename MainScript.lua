@@ -113,7 +113,7 @@ if not _G.Ventum then
 	
 	local NotifyStrokeGradient = Inst.New("UIGradient", NotifyFrameStroke)
 	NotifyStrokeGradient.Transparency = NumberSequence.new{
-		NumberSequence.new(0, 1),
+		NumberSequenceKeypoint.new(0, 1),
 		NumberSequenceKeypoint.new(1, 0)
 	};
 	
@@ -202,7 +202,7 @@ if not _G.Ventum then
 	
 	Services.UserInputService.InputBegan:Connect(function(Button, Processed)
 		if not Processed then
-			if Button.KeyCode == Enum.KeyCode.Backquote then
+			if Button.KeyCode == Enum.KeyCode.BackSlash then
 				CommandBarFrame.Position = UDim2.new(1.2, 0, 0.5, 0)
 				CommandBarFrame.Size = UDim2.new(0.15625, 0, 0.0452488735, 0)
 				CommandBarFrame:TweenPosition(UDim2.new(0.93, 0, 0.5, 0), "Out", "Exponential", 0.5, false)
