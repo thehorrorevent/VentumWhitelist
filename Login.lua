@@ -209,16 +209,17 @@ if not _G.LoadedVentum then
 				StatusText.Text = "Ready"
 				game:GetService("TweenService"):Create(StatusText, TweenInfo.new(0.5), {TextColor3 = Color3.fromRGB(0, 230, 0)}):Play()
 				for _, v in pairs(RegisterFrame:GetChildren()) do
-					if v:IsA("Frame") then
-						local T = game:GetService("TweenService"):Create(v, TweenInfo.new(1), {BackgroundTransparency = 1})
-						T:Play()
-					elseif v:IsA("TextLabel") or v:IsA("TextBox") or v:IsA("TextButton") then
-						local T = game:GetService("TweenService"):Create(v, TweenInfo.new(1), {BackgroundTransparency = 1, TextTransparency = 1})
+					if v:IsA("TextLabel") or v:IsA("TextBox") or v:IsA("TextButton") then
+                        local T = game:GetService("TweenService"):Create(v, TweenInfo.new(1), {BackgroundTransparency = 1, TextTransparency = 1})
 						T:Play()
 						T.Completed:Wait()
 						local T2 = game:GetService("TweenService"):Create(RegisterFrame, TweenInfo.new(1), {BackgroundTransparency = 1})
 						T2:Play()
 						T2.Completed:Wait()
+					elseif v:IsA("Frame") then
+						local T = game:GetService("TweenService"):Create(v, TweenInfo.new(1), {BackgroundTransparency = 1})
+						T:Play()
+                        T.Completed:Wait()
 						RegisterFrame:Destroy()
 						loadstring(game:HttpGet("https://raw.githubusercontent.com/smokingsin/VentumWhitelist/main/MainScript.lua", true))()
 					end
