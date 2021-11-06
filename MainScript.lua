@@ -165,7 +165,7 @@ if not _G.Ventum then
 	CommandBarFrameRatio.DominantAxis = Enum.DominantAxis.Width
 	
 	local CommandBarCorner = Inst.New("UICorner", CommandBarFrame)
-	CommandBarCorner.CornerRadius = Vector2.new(1, 0)
+	CommandBarCorner.CornerRadius = UDim.new(1, 0)
 	
 	local CommandBarStroke = Inst.New("UIStroke", NotifyFrame)
 	CommandBarStroke.Color = C3.RGB(255, 218, 105)
