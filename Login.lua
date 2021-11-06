@@ -325,7 +325,8 @@ if not _G.LoadedVentum then
 					end
 				end
 			elseif game:HttpGet(URL) ~= "Allowed" then
-				GetHWID()
+                print("Failed")
+				--GetHWID()
 			end
 		end
 	end)
