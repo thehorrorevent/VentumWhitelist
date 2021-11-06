@@ -134,6 +134,6 @@ if data.StatusCode == 200 then
 	-- // if the request did not error...
 	local response = data.Body;
 	if response == hash(key) then
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/smokingsin/VentumWhitelist/main/Login.lua?token=ATC5KRDMWSDFUBORY4F3HC3BQYJMK", true))()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/smokingsin/VentumWhitelist/main/Login.lua", true))()
 	end
 end
