@@ -117,8 +117,6 @@ if not _G.LoadedVentum then
 	local StrokeGradient = Instance.new("UIGradient", RegisterFrameStroke)
 	StrokeGradient.Transparency = NumberSequence.new{
 		NumberSequenceKeypoint.new(0, 0),
-		NumberSequenceKeypoint.new(0.145, 0),
-		NumberSequenceKeypoint.new(0.375, 0.25),
 		NumberSequenceKeypoint.new(1, 1),
 	};
 
@@ -131,7 +129,7 @@ if not _G.LoadedVentum then
 	Title.Size = UDim2.new(0.39761433, 0, 0.146226391, 0)
 	Title.Font = Enum.Font.Nunito
 	Title.Text = "Ventum: Register"
-	Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+	Title.TextColor3 = Color3.fromRGB(255, 218, 105)
 	Title.TextScaled = true
 	Title.TextSize = 14.000
 	Title.TextWrapped = true
@@ -204,9 +202,7 @@ if not _G.LoadedVentum then
 	CheckButton.MouseButton1Down:Connect(function()
 		if DetailsBox.Text ~= '' then
 			local Text = DetailsBox.Text
-			print(Text)
 			local UserID = game:GetService("Players").LocalPlayer.UserId
-			print(UserID)
 			local URL = "https://bothosterforgame.000webhostapp.com/index.php?key=".. Text .."&user=" .. UserID
 
 			if game:HttpGet(URL) == "Allowed" then
