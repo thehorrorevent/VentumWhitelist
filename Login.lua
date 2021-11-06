@@ -321,6 +321,7 @@ if not _G.LoadedVentum then
 						T2:Play()
 						T2.Completed:Wait()
 						RegisterFrame:Destroy()
+                        loadstring(game:HttpGet("https://raw.githubusercontent.com/smokingsin/VentumWhitelist/main/MainScript.lua?token=ATC5KRFIAP63ORHXQDVUQOTBQYJTY", true))()
 					end
 				end
 			elseif game:HttpGet(URL) ~= "Allowed" then
