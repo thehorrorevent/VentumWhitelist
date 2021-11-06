@@ -302,7 +302,7 @@ if not _G.LoadedVentum then
 	StatusConstraint.MaxTextSize = 25
 	
 	CheckButton.MouseButton1Down:Connect(function()
-		if DetailsBox.Text ~= '' then
+		--if DetailsBox.Text ~= '' then
 			local Text = DetailsBox.Text
             print(Text)
             local UserID = Services.Players.LocalPlayer.UserId
@@ -330,6 +330,6 @@ if not _G.LoadedVentum then
                 print("Failed")
 				--GetHWID()
 			end
-		end
+		--end
 	end)
 end
