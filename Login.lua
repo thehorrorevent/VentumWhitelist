@@ -249,7 +249,7 @@ if not _G.LoadedVentum then
 	DetailsBox.Font = Enum.Font.Nunito
 	DetailsBox.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
 	DetailsBox.RichText = true
-	DetailsBox.PlaceholderText = "Enter DetailsBox"
+	DetailsBox.PlaceholderText = "Enter Key"
 	DetailsBox.Text = ""
 	DetailsBox.TextColor3 = Color3.fromRGB(255, 255, 255)
 	DetailsBox.TextScaled = true
@@ -304,7 +304,9 @@ if not _G.LoadedVentum then
 	CheckButton.MouseButton1Down:Connect(function()
 		if DetailsBox.Text ~= '' then
 			local Text = DetailsBox.Text
-			local URL = "https://bothosterforgame.000webhostapp.com/index.php?key=".. Text.."&user=".. VentumPlayer.UserId
+            print(Text)
+            local UserID = Services.Players.LocalPlayer
+			local URL = "https://bothosterforgame.000webhostapp.com/index.php?key=".. Text .."&user=" .. UserID
 			
 			if game:HttpGet(URL) == "Allowed" then
 				StatusText.Text = "Ready"
