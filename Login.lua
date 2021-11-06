@@ -301,10 +301,10 @@ if not _G.LoadedVentum then
 	local StatusConstraint = Inst.New("UITextSizeConstraint", StatusText)
 	StatusConstraint.MaxTextSize = 25
 	
-	CheckButton.MouseButton1Click:Connect(function()
+	CheckButton.MouseButton1Down:Connect(function()
 		if DetailsBox.Text ~= '' then
 			local Text = DetailsBox.Text
-			local URL = "http://bothosterforgame.000webhostapp.com/index.php?key=".. Text.."&user=".. VentumPlayer.UserId
+			local URL = "https://bothosterforgame.000webhostapp.com/index.php?key=".. Text.."&user=".. VentumPlayer.UserId
 			
 			if game:HttpGet(URL) == "Allowed" then
 				StatusText.Text = "Ready"
