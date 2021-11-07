@@ -36,17 +36,6 @@ if not _G.Ventum then
 	local Vec = {New = Vector3.new}
 	local C3 = {RGB = Color3.fromRGB}
 
-	--/ Commands
-	local VentumCommands = {
-		-- Template: {Name = "", Description = "", Triggers = {''}, ArgType = 'none', ArgsNeeded = 'none'},
-		{Name = "Rejoin", Description = "Rejoins your current JobId", Triggers = {'rejoin', 'rj'}, ArgType = 'none', ArgsNeeded = 'none'},
-		{Name = "Fly", Description = "Makes you fly", Triggers = {'fly', 'bird'}, ArgType = 'none', ArgsNeeded = 'none'},
-		{Name = "Walkspeed", Description = "Changes your Humanoid Walkspeed", Triggers = {'walkspeed', 'wspeed', 'ws', 'speed'}, ArgType = 'Number', ArgsNeeded = 'Speed Amount'},
-		{Name = "Jump Power", Description = "Changes your Humanoid Jump Power", Triggers = {'jumppower', 'jpower', 'jp', 'jump'}, ArgType = 'Number', ArgsNeeded = 'Power Amount'},
-		{Name = "Respawn", Description = "Resets your character and loads in the last position", Triggers = {'respawn', 'reset', 'refresh', 're'}, ArgType = 'none', ArgsNeeded = 'none'},
-		{Name = "Time", Description = "Changes the in-game time", Triggers = {'time', 'tod', 'timeofday'}, ArgType = 'Number', ArgsNeeded = 'Time Of Day'},
-	};
-
 	--/ Globals
 	local VentumPlayer = Services.Players.LocalPlayer
 	local ChatRemote = Services.ReplicatedStorage:WaitForChild("DefaultChatSystemChatEvents"):WaitForChild("SayMessageRequest")
@@ -196,6 +185,39 @@ if not _G.Ventum then
 	CommandBarBoxConstraint = Inst.New("UITextSizeConstraint", CommandBarBox)
 	CommandBarBoxConstraint.MaxTextSize = 30
 	
+	--/ Command Functions
+	function Notify(Text, Duration)
+		local MoveIn = Services.TweenService:Create(NotifyFrame, TweenInfo.new(1), {Position = UDim2.new(0.07, 0, 0.9, 0)})
+		NotifText.Text = Text
+		MoveIn:Play()
+		MoveIn.Completed:Wait()
+		wait(Duration)
+		local MoveBack = Services.TweenService:Create(NotifyFrame, TweenInfo.new(1), {Position = UDim2.new(0.536694407, 0, 0.592198074, 0)})
+		MoveBack:Play()
+		MoveBack.Completed:Wait()
+	end
+	
+	function Rejoin()
+		Notify("Rejoining..", 3)
+		Services.TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
+	end
+	
+	function WalkSpeed(Speed)
+		local Hum = VentumPlayer.Character:WaitForChild("Humanoid")
+		Hum.WalkSpeed = Speed
+	end
+	
+	--/ Commands
+	local VentumCommands = {
+		-- Template: {Name = "", Description = "", Triggers = {''}, ArgType = 'none', ArgsNeeded = 'none'},
+		{Name = "Rejoin", Description = "Rejoins your current JobId", Triggers = {'rejoin', 'rj'}, ArgType = 'none', ArgsNeeded = 'none', Function = function(Caller, Args) if Caller.Name == VentumPlayer.Name then Rejoin() end end},
+		{Name = "Fly", Description = "Makes you fly", Triggers = {'fly', 'bird'}, ArgType = 'none', ArgsNeeded = 'none'},
+		{Name = "WalkSpeed", Description = "Changes your Humanoid Walkspeed", Triggers = {'walkspeed', 'wspeed', 'ws', 'speed'}, ArgType = 'Number', ArgsNeeded = 'Speed Amount', Function = function(Caller, Args) local Speed = tonumber(Args[2]) WalkSpeed(Speed) end},
+		{Name = "JumpPower", Description = "Changes your Humanoid Jump Power", Triggers = {'jumppower', 'jpower', 'jp', 'jump'}, ArgType = 'Number', ArgsNeeded = 'Power Amount'},
+		{Name = "Respawn", Description = "Resets your character and loads in the last position", Triggers = {'respawn', 'reset', 'refresh', 're'}, ArgType = 'none', ArgsNeeded = 'none'},
+		{Name = "Time", Description = "Changes the in-game time", Triggers = {'time', 'tod', 'timeofday'}, ArgType = 'Number', ArgsNeeded = 'Time Of Day'},
+	};
+	
 	--/ Main Script
 	function ProcessCommand(message)
 		local IsACommand = false
@@ -235,7 +257,7 @@ if not _G.Ventum then
 					for index, cmd in pairs(VentumCommands) do
 						for i, trigger in pairs(cmd.Triggers) do
 							if trigger == Args[1] then
-								-- Figure out how to add command action here Tomorrow
+								cmd.Function(Args)
 							end
 							FoundCommand = true
 							break
