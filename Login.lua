@@ -219,6 +219,7 @@ if not _G.LoadedVentum then
                         T.Completed:Wait()
 					end
 				end
+				wait(1.01)
                 local T2 = game:GetService("TweenService"):Create(RegisterFrame, TweenInfo.new(1), {BackgroundTransparency = 1})
 				T2:Play()
 				T2.Completed:Wait()
