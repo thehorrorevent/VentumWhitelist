@@ -60,6 +60,11 @@ if not _G.Ventum then
 		ChatPrefix = ""
 	};
 	
+	--/ Connections
+	local Connections = {
+		Noclip = nil
+	}
+	
 	--/ Local Functions
 	local CheckSettings = pcall(function()
 		VentumSettings = pcall(function()
@@ -220,11 +225,26 @@ if not _G.Ventum then
 	
 	--/ Commands
 	local VentumCommands = {
-		-- Template: {Name = "", Description = "", Triggers = {''}, ArgType = 'none', ArgsNeeded = 'none'},
+		-- Template: {Name = "", Description = "", Triggers = {''}, ArgType = 'none', ArgsNeeded = 'none', Function = function(Caller, Args) end},
 		{Name = "Rejoin", Description = "Rejoins your current JobId", Triggers = {'rejoin', 'rj'}, ArgType = 'none', ArgsNeeded = 'none', 
 		Function = function(Caller, Args) 
 			Rejoin()
 		end},
+		{Name = "Noclip", Description = "Lets you walk through stuff", Triggers = {'noclip', 'nclip'}, ArgType = 'none', ArgsNeeded = 'none', 
+		Function = function(Caller, Args)
+			Connections.Noclip = game.Loaded.Connect(Services.RunService.Stepped, function()
+				for index, part in next, VentumPlayer.Character:GetChildren() do
+					if part:IsA("BasePart") and part.CanCollide then
+						part.CanCollide = false
+					end
+				end	
+			end)
+		end},
+		{Name = "Clip", Description = "Prevents you from walking through stuff", Triggers = {'clip', 'unnoclip'}, ArgType = 'none', ArgsNeeded = 'none', 
+		Function = function(Caller, Args)
+			Connections.Noclip:Disconnect()
+		end},
+		
 		{Name = "Fly", Description = "Makes you fly", Triggers = {'fly', 'bird'}, ArgType = 'none', ArgsNeeded = 'none',
 		Function = function(Caller, Args)
 			Notify('Fly Coming Soon..', 3)
@@ -232,6 +252,7 @@ if not _G.Ventum then
 		{Name = "WalkSpeed", Description = "Changes your Humanoid Walkspeed", Triggers = {'walkspeed', 'wspeed', 'ws', 'speed'}, ArgType = 'Number', ArgsNeeded = 'Speed Amount',
 		Function = function(Caller, Args)
 			local Speed = Args[2]
+			print(Speed)
 			WalkSpeed(Speed)
 		end},
 		{Name = "JumpPower", Description = "Changes your Humanoid Jump Power", Triggers = {'jumppower', 'jpower', 'jp', 'jump'}, ArgType = 'Number', ArgsNeeded = 'Power Amount',
@@ -241,17 +262,14 @@ if not _G.Ventum then
 		end},
 		{Name = "Respawn", Description = "Resets your character and loads in the last position", Triggers = {'respawn', 'reset', 'refresh', 're'}, ArgType = 'none', ArgsNeeded = 'none',
 		Function = function(Caller, Args)
-			local M = Inst.New("Model")
-			VentumPlayer.Character = M
-			VentumPlayer.Character = VentumPlayer.Character
-			M:Destroy()
-			wait(Services.Players.RespawnTime - 0.02)
 			local OldPosition = VentumPlayer.Character.HumanoidRootPart.CFrame
+			VentumPlayer.Character:BreakJoints()
 			game.Loaded.Wait(VentumPlayer.CharacterAdded)
 			VentumPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldPosition
 			Notify('Refreshed Character', 2)
 		end},
-		{Name = "Time", Description = "Changes the in-game time", Triggers = {'time', 'tod', 'timeofday'}, ArgType = 'Number', ArgsNeeded = 'Time Of Day'},
+		{Name = "Time", Description = "Changes the in-game time", 
+			Triggers = {'time', 'tod', 'timeofday'}, ArgType = 'Number', ArgsNeeded = 'Time Of Day'},
 	};
 	
 	--/ Main Script
@@ -272,7 +290,7 @@ if not _G.Ventum then
 				
 				for index, cmd in pairs(VentumCommands) do
 					for index2, trigger in pairs(cmd.Triggers) do
-						if trigger == Args[1] then
+						if trigger:lower() == Args[1]:lower() then
 							cmd.Function(plr, Args)
 						end
 						Found = true
@@ -281,14 +299,16 @@ if not _G.Ventum then
 				end
 				if Found then
 					break
+				else
+					Notify('Invalid command | Please try again!', 2)
 				end
 			end
 		end
 	end
 	
 	CommandBarBox.FocusLost:Connect(function(Enter)
+		CommandBarFrame:TweenPosition(UDim2.new(1.2, 0, 0.5, 0), "Out", "Quad", 1, false)
 		if Enter then
-			CommandBarFrame:TweenPosition(UDim2.new(1.2, 0, 0.5, 0), "Out", "Quad", 1, false)
 			local Text
 			if CommandBarBox.Text ~= '' then
 				Text = CommandBarBox.Text
