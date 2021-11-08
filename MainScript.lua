@@ -138,9 +138,12 @@ if not _G.Ventum then
 	NotifText.Font = Enum.Font.Nunito
 	NotifText.Text = ""
 	NotifText.TextColor3 = Color3.fromRGB(255, 218, 105)
-	NotifText.TextScaled = true
-	NotifText.TextSize = 14.000
+	NotifText.TextScaled = false
+	NotifText.TextSize = 20.000
 	NotifText.TextWrapped = true
+	
+	local NotifTextConstraint = Inst.New("UITextSizeConstraint", NotifText)
+	NotifTextConstraint.MaxTextSize = 20
 	
 	local CommandBarFrame = Inst.New("Frame", Ventum)
 	CommandBarFrame.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -192,12 +195,15 @@ if not _G.Ventum then
 		MoveIn:Play()
 		MoveIn.Completed:Wait()
 		wait(Duration)
-		local MoveBack = Services.TweenService:Create(NotifyFrame, TweenInfo.new(1), {Position = UDim2.new(0.536694407, 0, 0.592198074, 0)})
+		local MoveBack = Services.TweenService:Create(NotifyFrame, TweenInfo.new(1), {Position = UDim2.new(-0.5, 0, 0.9, 0)})
 		MoveBack:Play()
 		MoveBack.Completed:Wait()
 	end
 	
 	function Rejoin()
+		coroutine.wrap(function()
+			Notify('Rejoining..', 3)
+		end)
 		Notify("Rejoining..", 3)
 		Services.TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
 	end
@@ -207,72 +213,88 @@ if not _G.Ventum then
 		Hum.WalkSpeed = Speed
 	end
 	
+	function JumpPower(Power)
+		local Hum = VentumPlayer.Character:WaitForChild("Humanoid")
+		Hum.JumpPower = Power
+	end
+	
 	--/ Commands
 	local VentumCommands = {
 		-- Template: {Name = "", Description = "", Triggers = {''}, ArgType = 'none', ArgsNeeded = 'none'},
-		{Name = "Rejoin", Description = "Rejoins your current JobId", Triggers = {'rejoin', 'rj'}, ArgType = 'none', ArgsNeeded = 'none', Function = function(Caller, Args) if Caller.Name == VentumPlayer.Name then Rejoin() end end},
-		{Name = "Fly", Description = "Makes you fly", Triggers = {'fly', 'bird'}, ArgType = 'none', ArgsNeeded = 'none'},
-		{Name = "WalkSpeed", Description = "Changes your Humanoid Walkspeed", Triggers = {'walkspeed', 'wspeed', 'ws', 'speed'}, ArgType = 'Number', ArgsNeeded = 'Speed Amount', Function = function(Caller, Args) local Speed = tonumber(Args[2]) WalkSpeed(Speed) end},
-		{Name = "JumpPower", Description = "Changes your Humanoid Jump Power", Triggers = {'jumppower', 'jpower', 'jp', 'jump'}, ArgType = 'Number', ArgsNeeded = 'Power Amount'},
-		{Name = "Respawn", Description = "Resets your character and loads in the last position", Triggers = {'respawn', 'reset', 'refresh', 're'}, ArgType = 'none', ArgsNeeded = 'none'},
+		{Name = "Rejoin", Description = "Rejoins your current JobId", Triggers = {'rejoin', 'rj'}, ArgType = 'none', ArgsNeeded = 'none', 
+		Function = function(Caller, Args) 
+			Rejoin()
+		end},
+		{Name = "Fly", Description = "Makes you fly", Triggers = {'fly', 'bird'}, ArgType = 'none', ArgsNeeded = 'none',
+		Function = function(Caller, Args)
+			Notify('Fly Coming Soon..', 3)
+		end},
+		{Name = "WalkSpeed", Description = "Changes your Humanoid Walkspeed", Triggers = {'walkspeed', 'wspeed', 'ws', 'speed'}, ArgType = 'Number', ArgsNeeded = 'Speed Amount',
+		Function = function(Caller, Args)
+			local Speed = Args[2]
+			WalkSpeed(Speed)
+		end},
+		{Name = "JumpPower", Description = "Changes your Humanoid Jump Power", Triggers = {'jumppower', 'jpower', 'jp', 'jump'}, ArgType = 'Number', ArgsNeeded = 'Power Amount',
+		Function = function(Caller, Args)
+			local Amount = Args[2]
+			JumpPower(Amount)
+		end},
+		{Name = "Respawn", Description = "Resets your character and loads in the last position", Triggers = {'respawn', 'reset', 'refresh', 're'}, ArgType = 'none', ArgsNeeded = 'none',
+		Function = function(Caller, Args)
+			local M = Inst.New("Model")
+			VentumPlayer.Character = M
+			VentumPlayer.Character = VentumPlayer.Character
+			M:Destroy()
+			wait(Services.Players.RespawnTime - 0.02)
+			local OldPosition = VentumPlayer.Character.HumanoidRootPart.CFrame
+			game.Loaded.Wait(VentumPlayer.CharacterAdded)
+			VentumPlayer.Character:WaitForChild("HumanoidRootPart").CFrame = OldPosition
+			Notify('Refreshed Character', 2)
+		end},
 		{Name = "Time", Description = "Changes the in-game time", Triggers = {'time', 'tod', 'timeofday'}, ArgType = 'Number', ArgsNeeded = 'Time Of Day'},
 	};
 	
 	--/ Main Script
-	function ProcessCommand(message)
+	function ProcessCommand(plr, message)
 		local IsACommand = false
 		local Prefix = Settings.ChatPrefix
 		local Original = {message}
-
-		if message:sub(1,string.len(Prefix)) == Prefix then
-			IsACommand = true
-		end
-
-		if IsACommand  then
-			for index, msg in pairs(Original) do
-				if string.lower(msg:sub(1, string.len(Prefix))) == Prefix then
-					msg = msg:sub(string.len(Prefix) + 1)
-					message[index] = msg
-				end
-				
-				for i = 1, string.len(msg) do
-					if Prefix == string.lower(msg:sub(i, i + string.len(Prefix) - 1)) then
-						table.insert(Original, msg:sub(1, i - 1))
-						table.insert(Original, msg:sub(i + string.len(Prefix)))
-						table.remove(Original, i)
-					end
-				end
+		
+		for i = 1, #Original do
+			local Args = {};
+			for str in string.gmatch(Original[i], "%S+") do
+				table.insert(Args, str)
 			end
 			
-			for i = 1, #Original do
-				local Args = {}
-				for v in string.gmatch(Original[i], "%S+") do
-					table.insert(Args, v)
-				end
+			if #Args > 0 then
+				Args[1] = string.lower(Args[1])
+				local Found = false
 				
-				if #Args > 0 then
-					Args[1] = string.lower(Args[1])
-					local FoundCommand = false
-					
-					for index, cmd in pairs(VentumCommands) do
-						for i, trigger in pairs(cmd.Triggers) do
-							if trigger == Args[1] then
-								cmd.Function(Args)
-							end
-							FoundCommand = true
-							break
+				for index, cmd in pairs(VentumCommands) do
+					for index2, trigger in pairs(cmd.Triggers) do
+						if trigger == Args[1] then
+							cmd.Function(plr, Args)
 						end
-					end
-					if FoundCommand then
+						Found = true
 						break
 					end
+				end
+				if Found then
+					break
 				end
 			end
 		end
 	end
 	
-	CommandBarBox.FocusLost:Connect(function()
-		CommandBarFrame:TweenPosition(UDim2.new(1.2, 0, 0.5, 0), "Out", "Quad", 1, false)
+	CommandBarBox.FocusLost:Connect(function(Enter)
+		if Enter then
+			CommandBarFrame:TweenPosition(UDim2.new(1.2, 0, 0.5, 0), "Out", "Quad", 1, false)
+			local Text
+			if CommandBarBox.Text ~= '' then
+				Text = CommandBarBox.Text
+				ProcessCommand(VentumPlayer, Text)
+			end	
+		end
 	end)
 	
 	Services.UserInputService.InputBegan:Connect(function(Button, Processed)
